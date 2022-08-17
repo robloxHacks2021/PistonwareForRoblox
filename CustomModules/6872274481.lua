@@ -128,7 +128,7 @@ local function GetURL(scripturl)
 	if shared.VapeDeveloper then
 		return readfile("vape/"..scripturl)
 	else
-		return game:HttpGet("https://raw.githubusercontent.com/TheMagicPiston/PistonwareForRoblox/main/"..scripturl, true)
+		return game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/PistonwareForRoblox/main/"..scripturl, true)
 	end
 end
 local shalib = loadstring(GetURL("Libraries/sha.lua"))()
@@ -146,7 +146,7 @@ local whitelistsuc = nil
 task.spawn(function()
 	whitelistsuc = pcall(function()
 		whitelisted = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/whitelists/main/whitelist2.json", true))
-		whitelistedplus = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/TheMagicPiston/whitelists/main/whitelists2.json", true))
+		whitelistedplus = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/whitelists/main/whitelists2.json", true))
 	end)
 end)
 local AnticheatBypassNumbers = {
@@ -310,7 +310,7 @@ local function getcustomassetfunc(path)
 			textlabel:Remove()
 		end)
 		local req = requestfunc({
-			Url = "https://raw.githubusercontent.com/TheMagicPiston/PistonwareForRoblox/main/"..path:gsub("vape/assets", "assets"),
+			Url = "https://raw.githubusercontent.com/robloxHacks2021/PistonwareForRoblox/main/"..path:gsub("vape/assets", "assets"),
 			Method = "GET"
 		})
 		writefile(path, req.Body)
@@ -10560,7 +10560,7 @@ runcode(function()
 end)
 
 task.spawn(function()
-	local url = "https://raw.githubusercontent.com/TheMagicPiston/PistonwareForRoblox/main/CustomModules/bedwarsdata"
+	local url = "https://raw.githubusercontent.com/robloxHacks2021/PistonwareForRoblox/main/CustomModules/bedwarsdata"
 
 	local function createannouncement(announcetab)
 		local notifyframereal = Instance.new("TextButton")

@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/TheMagicPiston/PistonwareForRoblox/main/NewMainScript.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/PistonwareForRoblox/main/NewMainScript.lua", true))()
