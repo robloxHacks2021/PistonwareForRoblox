@@ -16,13 +16,6 @@ local getfunctions
 local origC0 = nil
 local vec3 = Vector3.new
 local cfnew = CFrame.new
-local function GetURL(scripturl)
-	if shared.VapeDeveloper then
-		return readfile("vape/"..scripturl)
-	else
-		return game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/PistonwareForRoblox/main/"..scripturl, true)
-	end
-end
 local bettergetfocus = function()
 	if KRNL_LOADED then 
 		return ((game:GetService("Players").LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar:IsFocused() or searchbar:IsFocused()) and true or nil) 
@@ -86,15 +79,10 @@ local whitelisted = {
 	owners = {},
 	chattags = {}
 }
-local whitelistedplus = {
-	owners = {},
-	chattags = {}
-}
 local whitelistsuc = nil
 task.spawn(function()
 	whitelistsuc = pcall(function()
-		whitelisted = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/whitelists/main/whitelist2.json", true))
-		whitelistedplus = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/whitelists/main/whitelists2.json", true))
+		whitelisted = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://raw.githubusercontent.com/robloxHacks2021/whitelists/main/whitelist2.json", true))
 	end)
 end)
 
@@ -250,27 +238,19 @@ runcode(function()
 			["CheckWhitelisted"] = function(plr, ownercheck)
 				local plrstr = bedwars["HashFunction"](plr.Name..plr.UserId)
 				local localstr = bedwars["HashFunction"](lplr.Name..lplr.UserId)
-				return (((ownercheck == nil and (betterfind(whitelisted.players, plrstr) or betterfind(whitelisted.owners, plrstr)) or ownercheck and betterfind(whitelisted.owners, plrstr))) and betterfind(whitelisted.owners, localstr) == nil and true or false) or (((ownercheck == nil and (betterfind(whitelistedplus.owners, plrstr)) or ownercheck and betterfind(whitelistedplus.owners, plrstr))) and betterfind(whitelistedplus.owners, localstr) == nil and true or false)
+				return ((ownercheck == nil and (betterfind(whitelisted.players, plrstr) or betterfind(whitelisted.owners, plrstr)) or ownercheck and betterfind(whitelisted.owners, plrstr))) and betterfind(whitelisted.players, localstr) == nil and betterfind(whitelisted.owners, localstr) == nil and true or false
 			end,
 			["CheckPlayerType"] = function(plr)
 				local plrstr = bedwars["HashFunction"](plr.Name..plr.UserId)
-				local playertype, playerattackable = "DEFAULT", true
-				local private = betterfind(whitelisted.players, plrstr)
-				local owner = betterfind(whitelisted.owners, plrstr)
-				local ownerplus = betterfind(whitelistedplus.owners, plrstr)
-				if private then
+				local playertype = "DEFAULT"
+				if betterfind(whitelisted.players, plrstr) then
 					playertype = "VAPE PRIVATE"
-					playerattackable = not (type(private) == "table" and private.invulnerable or true)
 				end
-				if owner then
+				if betterfind(whitelisted.owners, plrstr) then
 					playertype = "VAPE OWNER"
-					playerattackable = not (type(owner) == "table" and owner.invulnerable or true)
 				end
-				if ownerplus then
-					playertype = "PISTONWARE OWNER"
-					playerattackable = not (type(ownerplus) == "table" and ownerplus.invulnerable or true)
-				end
-				return playertype, playerattackable
+				playertype = "VAPE PRIVATE"
+				return playertype
 			end,
 			["HashFunction"] = function(str)
 				if storedshahashes[tostring(str)] == nil then
@@ -352,21 +332,6 @@ runcode(function()
 					end
 				end
 			end
-            for i3,v3 in pairs(whitelistedplus.chattags) do
-				if v3.NameColor then
-					v3.NameColor = Color3.fromRGB(v3.NameColor.r, v3.NameColor.g, v3.NameColor.b)
-				end
-				if v3.ChatColor then
-					v3.ChatColor = Color3.fromRGB(v3.ChatColor.r, v3.ChatColor.g, v3.ChatColor.b)
-				end
-				if v3.Tags then
-					for i4,v4 in pairs(v3.Tags) do
-						if v4.TagColor then
-							v4.TagColor = Color3.fromRGB(v4.TagColor.r, v4.TagColor.g, v4.TagColor.b)
-						end
-					end
-				end
-			end
 			for i,v in pairs(getconnections(repstorage.DefaultChatSystemChatEvents.OnNewMessage.OnClientEvent)) do
 				if v.Function and #debug.getupvalues(v.Function) > 0 and type(debug.getupvalues(v.Function)[1]) == "table" and getmetatable(debug.getupvalues(v.Function)[1]) and getmetatable(debug.getupvalues(v.Function)[1]).GetChannel then
 					oldchanneltab = getmetatable(debug.getupvalues(v.Function)[1])
@@ -406,23 +371,8 @@ runcode(function()
 											}
 										}
 									end
-                                    if plrtype == "PISTONWARE OWNER" then
-                                        MessageData.ExtraData = {
-                                            NameColor = players[MessageData.FromSpeaker].Team == nil and Color3.new(1, 0, 0) or players[MessageData.FromSpeaker].TeamColor.Color,
-                                            Tags = {
-                                                table.unpack(MessageData.ExtraData.Tags),
-                                                {
-                                                    TagColor = Color3.new(1, 0.3, 0.3),
-                                                    TagText = "PISTONWARE OWNER"
-                                                }
-                                            }
-                                        }
-                                    end
 									if whitelisted.chattags[hash] then
 										MessageData.ExtraData = whitelisted.chattags[hash]
-									end
-                                    if whitelistedplus.chattags[hash] then
-										MessageData.ExtraData = whitelistedplus.chattags[hash]
 									end
 								end
 								return addmessage(Self2, MessageData)
@@ -467,16 +417,6 @@ local function getNametagString(plr)
 	end
 	if whitelisted.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)] then
 		local data = whitelisted.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)]
-		local newnametag = ""
-		if data.Tags then
-			for i2,v2 in pairs(data.Tags) do
-				newnametag = newnametag..'<font color="rgb('..math.floor(v2.TagColor.r)..', '..math.floor(v2.TagColor.g)..', '..math.floor(v2.TagColor.b)..')">['..v2.TagText..']</font> '
-			end
-		end
-		nametag = newnametag..(newnametag.NameColor and '<font color="rgb('..math.floor(newnametag.NameColor.r)..', '..math.floor(newnametag.NameColor.g)..', '..math.floor(newnametag.NameColor.b)..')">' or '')..(plr.DisplayName or plr.Name)..(newnametag.NameColor and '</font>' or '')
-	end
-    if whitelistedplus.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)] then
-		local data = whitelistedplus.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)]
 		local newnametag = ""
 		if data.Tags then
 			for i2,v2 in pairs(data.Tags) do
@@ -566,26 +506,26 @@ local function friendCheck(plr, recolor)
 end
 
 local function renderNametag(plr)
-	if bedwars["CheckPlayerType"](plr) ~= "DEFAULT" or whitelisted.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)] or whitelistedplus.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)] then
+	if bedwars["CheckPlayerType"](plr) ~= "DEFAULT" or whitelisted.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)] then
 		local playerlist = game:GetService("CoreGui"):FindFirstChild("PlayerList")
 		if playerlist then
 			pcall(function()
 				local playerlistplayers = playerlist.PlayerListMaster.OffsetFrame.PlayerScrollList.SizeOffsetFrame.ScrollingFrameContainer.ScrollingFrameClippingFrame.ScollingFrame.OffsetUndoFrame
 				local targetedplr = playerlistplayers:FindFirstChild("p_"..plr.UserId)
-				if targetedplr then
-                    if bedwars["CheckPlayerType"](plr) == "PISTONWARE OWNER" then
-                        targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = getcustomassetfunc("vape/assets/PistonwareIcon.png")
-                    else
-					    targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = getcustomassetfunc("vape/assets/VapeIcon.png")
-				    end
-                end
+				if targetedplr then 
+					if string.lower(whitelisted.chattags[bedwars["HashFunction"](plr.Name..plr.UserId)].Tags.TagText):find("pistonware") then
+						targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = getcustomassetfunc("vape/assets/PistonwareIcon.png")
+					else
+						targetedplr.ChildrenFrame.NameFrame.BGFrame.OverlayFrame.PlayerIcon.Image = getcustomassetfunc("vape/assets/VapeIcon.png")
+					end
+				end
 			end)
 		end
 		local nametag = getNametagString(plr)
 		plr.CharacterAdded:connect(function(char)
 			if char ~= oldchar then
 				spawn(function()
-					pcall(function()
+					pcall(function() 
 						bedwars["getEntityTable"]:getEntity(plr):setNametag(nametag)
 						Cape(char, getcustomassetfunc("vape/assets/VapeCape.png"))
 					end)
